@@ -1,23 +1,40 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import { database, collection, onSnapshot } from './firebase'; // Doğru içe aktarma
+
 import './App.css';
 
 function App() {
+  const [input, setInput] = useState('');
+  const [values, setValues] = useState([]);
+
+  useEffect(() => {
+    const messagesCollection = collection(database, "messages");
+    const unsubscribe = onSnapshot(messagesCollection, snapshot => 
+      setValues(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    );
+
+    return () => unsubscribe(); // Cleanup function
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header>
+        <input 
+          type="text" 
+          placeholder="Data Input..." 
+          value={input} 
+          onChange={(e) => setInput(e.target.value)} 
+        />
+        <button disabled={!input}>Save to database</button>
       </header>
+      <ul>
+        {values.map(item => (
+          <li key={item.id}>{item.data.message}</li>
+        ))}
+      </ul>
     </div>
   );
 }
