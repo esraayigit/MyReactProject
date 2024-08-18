@@ -4,7 +4,8 @@ import { database, collection, onSnapshot } from './firebase'; // Doğru içe ak
 import './App.css';
 
 function App() {
-  const [input, setInput] = useState('');
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const [values, setValues] = useState([]);
 
   useEffect(() => {
@@ -16,7 +17,7 @@ function App() {
       })))
     );
 
-    return () => unsubscribe(); // Cleanup function
+    return () => unsubscribe(); 
   }, []);
 
   return (
@@ -24,11 +25,18 @@ function App() {
       <header>
         <input 
           type="text" 
-          placeholder="Data Input..." 
-          value={input} 
-          onChange={(e) => setInput(e.target.value)} 
+          placeholder="Kullanici Adi " 
+          value={username} 
+          onChange={(e) => setUserName(e.target.value)} 
         />
-        <button disabled={!input}>Save to database</button>
+        <input 
+          type="password" 
+          placeholder="Şifre" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+        />
+
+        <button disabled={!username}>Save to database</button>
       </header>
       <ul>
         {values.map(item => (
