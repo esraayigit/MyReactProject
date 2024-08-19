@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { database, collection, onSnapshot } from './firebase'; // Doğru içe aktarma
+import { getFirestore, collection, onSnapshot, addDoc } from 'firebase/firestore';
 
 import './App.css';
 
@@ -20,6 +20,26 @@ function App() {
     return () => unsubscribe(); 
   }, []);
 
+  function savetodatabase(username) {
+    const messagesCollection = collection(database, "messages");
+    const payload = { message: username };
+
+    addDoc(messagesCollection, payload)
+      .then(() => {
+        console.log('Document successfully written!');
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error);
+      });
+
+    setUserName('');
+    setPassword('');
+    console.log('username:', username);
+    console.log('password:', password);
+    console.log('payload:', payload);
+  }
+
+
   return (
     <div className="App">
       <header>
@@ -36,13 +56,15 @@ function App() {
           onChange={(e) => setPassword(e.target.value)} 
         />
 
-        <button disabled={!username}>Save to database</button>
+        <button disabled={!username} onClick={()=>savetodatabase(username)} >Save to database</button>
       </header>
-      <ul>
+      <div className='infos' > 
+       <ul>
         {values.map(item => (
           <li key={item.id}>{item.data.message}</li>
         ))}
       </ul>
+      </div>  
     </div>
   );
 }
